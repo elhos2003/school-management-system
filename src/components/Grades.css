@@ -1,0 +1,206 @@
+/* src/components/Grades.css */
+.grades-page {
+  overflow-y: auto;
+}
+
+/* Average Card */
+.average-card {
+  background: linear-gradient(135deg, #1e3a5f, #2563eb);
+  border-radius: 24px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+}
+
+.average-icon {
+  font-size: 48px;
+  background: rgba(255,255,255,0.2);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.average-info h3 {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.average-value {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.average-progress {
+  flex: 1;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: white;
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+/* Filters Bar */
+.filters-bar {
+  background: rgba(255,255,255,0.98);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.subject-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.filter-btn:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.sort-btn {
+  padding: 8px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.sort-btn.active {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+/* Grades Table */
+.grades-table-container {
+  background: rgba(255,255,255,0.98);
+  border-radius: 20px;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.grades-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grades-table th {
+  text-align: left;
+  padding: 18px 20px;
+  background: #f8fafc;
+  color: #1e3a5f;
+  font-weight: 700;
+  font-size: 14px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.grades-table td {
+  padding: 16px 20px;
+  color: #475569;
+  font-weight: 500;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.grades-table tr:hover td {
+  background: #f8fafc;
+}
+
+.subject-cell {
+  font-weight: 700;
+  color: #1e3a5f;
+}
+
+.grade-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.grade-badge.excellent {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.grade-badge.good {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.grade-badge.average {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.grade-badge.warning {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .average-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .grades-table th,
+  .grades-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+}

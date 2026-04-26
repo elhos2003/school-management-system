@@ -1,0 +1,233 @@
+/* ====== Reset ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ====== Signup Page ====== */
+.signup-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1F4FA8 0%, #2D6CDF 45%, #E8F0FF 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ====== Top Bar ====== */
+.top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #F8FAFC;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  position: relative;
+  height: 100px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.logo img {
+  height: 100px;
+  width: 100px;
+  
+}
+
+
+
+/* ====== Background Circles ====== */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 0;
+}
+
+.circle-1 {
+  width: 200px;
+  height: 200px;
+  top: 80px;
+  left: 10%;
+}
+
+.circle-2 {
+  width: 180px;
+  height: 180px;
+  top: 100px;
+  right: 10%;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 5%;
+}
+
+.circle-4 {
+  width: 220px;
+  height: 220px;
+  bottom: 10%;
+  right: 5%;
+}
+
+/* ====== Signup Card ====== */
+.signup-card {
+  background: white;
+  padding: 35px 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+  position: relative;
+  margin-top: 40px;
+}
+
+.title {
+  font-size: 22px;
+  color: #1e3a5f;
+  margin-bottom: 25px;
+  text-align: left;
+  font-weight: 700;
+}
+
+/* ====== Form Groups ====== */
+.form-group {
+  margin-bottom: 5px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-bottom: 6px;
+}
+
+/* ====== Inputs ====== */
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: 0.3s;
+  background: #f8fafc;
+  color: #1e3a5f;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: white;
+}
+
+.input::placeholder {
+  color: #b0c0d0;
+}
+
+/* ====== Error Messages ====== */
+.error {
+  display: block;
+  color: #ef4444;
+  font-size: 11px;
+  margin-bottom: 10px;
+  min-height: 14px;
+}
+
+.error-text {
+  color: #ef4444;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+/* ====== Terms ====== */
+.terms-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 15px 0;
+}
+
+.terms-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+/* ====== Button ====== */
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 5px;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* ====== Form Message ====== */
+.form-message {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+/* ====== Login Text ====== */
+.login-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #8899aa;
+}
+
+.login-text span {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-text span:hover {
+  text-decoration: underline;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 480px) {
+  .signup-card {
+    width: 95%;
+    padding: 25px 20px;
+    margin-top: 30px;
+  }
+  
+  .circle {
+    opacity: 0.5;
+  }
+}
