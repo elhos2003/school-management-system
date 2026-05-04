@@ -28,7 +28,8 @@ export default function Profile() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("profileDarkMode") === "true";
   });
-  
+  // أضف ده مع الـ states التانية
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" | "warning" } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -169,10 +170,16 @@ export default function Profile() {
   };
 
   const handleSave = () => {
-    setProfile(editData);
-    setIsEditing(false);
-    localStorage.setItem("userProfile", JSON.stringify(editData));
-  };
+  setProfile(editData);
+  setIsEditing(false);
+  localStorage.setItem("userProfile", JSON.stringify(editData));
+  
+  // Show success message
+  setToast({ message: "Profile saved successfully!", type: "success" });
+  
+  // Auto hide after 3 seconds
+  setTimeout(() => setToast(null), 3000);
+};
 
   const handleCancel = () => {
     setEditData(profile);
@@ -183,6 +190,7 @@ export default function Profile() {
   const toggleDarkMode = () => {
     setIsDarkMode(prev => !prev);
   };
+  
 
   return (
     <div className="dashboard-layout">
@@ -328,6 +336,16 @@ export default function Profile() {
             </div>
           </div>
         )}
+        {/* Toast Notification */}
+{toast && (
+  <div className={`toast-notification ${toast.type}`}>
+    <span className="toast-icon">
+      {toast.type === "success" ? "✅" : toast.type === "error" ? "❌" : toast.type === "warning" ? "⚠️" : "ℹ️"}
+    </span>
+    <span className="toast-message">{toast.message}</span>
+    <button className="toast-close" onClick={() => setToast(null)}>✕</button>
+  </div>
+)}
       </main>
     </div>
   );

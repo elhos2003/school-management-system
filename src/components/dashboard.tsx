@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import AIAssistant from "./AIAssistant";
 import "./dashboard.css";
 
 // Types
@@ -219,7 +220,7 @@ export default function Dashboard() {
             </div>
 
             {/* User Profile */}
-            <div className="user-profile">
+            <div className="user-profile" onClick={() => navigate("/profile")}>
               <div className="avatar">{studentData.name[0]}</div>
               <div className="user-info">
                 <span className="user-name">{studentData.name}</span>
@@ -300,6 +301,11 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* 🤖 AI Study Assistant */}
+        <div style={{ marginTop: "40px", marginBottom: "20px" }}>
+          <AIAssistant />
         </div>
       </main>
     </div>

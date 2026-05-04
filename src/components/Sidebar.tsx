@@ -7,6 +7,7 @@ const menuItems = [
   { id: "grades", label: "Grades", icon: "⭐", path: "/grades" },
   { id: "news", label: "News", icon: "📰", path: "/news" },
   { id: "homework", label: "Home Work", icon: "✏️", path: "/homework" },
+  { id: "behavior-tracker", label: "Behavior Tracker", icon: "🎯", path: "/behavior-tracker" },
   { id: "Profile", label: "Profile", icon: "👤", path: "/Profile" },
 ];
 

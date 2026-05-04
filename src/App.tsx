@@ -9,6 +9,8 @@ import Grades from "./components/Grades";
 import News from "./components/News";
 import Profile from "./components/Profile";
 import ForgotPassword from "./components/ForgotPassword";
+import BehaviorTrackerPage from "./components/BehaviorTrackerPage";
+
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         <Route path="/homework" element={<Homework />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/Forgetpassword" element={<ForgotPassword />} />
+        <Route path="/behavior-tracker" element={<BehaviorTrackerPage />} />
+
 
 
 
