@@ -705,3 +705,40 @@ body.dark-mode-profile .dark-mode-toggle {
   cursor: pointer;
   font-weight: 600;
 }
+/* أضف في آخر ملف Profile.css */
+
+/* Upload section */
+.upload-section {
+  margin-bottom: 20px;
+}
+
+.upload-area {
+  border: 2px dashed #cbd5e1;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #f8fafc;
+}
+
+.upload-area:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.upload-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.upload-area p {
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.upload-area small {
+  color: #94a3b8;
+  font-size: 12px;
+}

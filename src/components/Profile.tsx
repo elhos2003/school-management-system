@@ -22,20 +22,17 @@ export default function Profile() {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [userName, setUserName] = useState("Ahmed");
-  const [showCamera, setShowCamera] = useState(false);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("profileDarkMode") === "true";
   });
-  // أضف ده مع الـ states التانية
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" | "warning" } | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [profile, setProfile] = useState<UserProfile>({
-    name: "moxamed axmed",
-    email: "ahmed@school.com",
+    name: "",
+    email: "",
     phone: "+20 123 456 789",
     grade: "Grade 10",
     class: "Class A",
@@ -44,7 +41,7 @@ export default function Profile() {
     address: "123 School Street, Cairo",
     parentName: "Mohamed Ahmed",
     parentPhone: "+20 987 654 321",
-    profileImage: localStorage.getItem("profileImage") || "",
+    profileImage: "",
   });
 
   const [editData, setEditData] = useState(profile);
@@ -59,138 +56,129 @@ export default function Profile() {
     localStorage.setItem("profileDarkMode", String(isDarkMode));
   }, [isDarkMode]);
 
+  // تحميل بيانات المستخدم من localStorage
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
-      setUserName(currentUser);
-      setProfile(prev => ({ ...prev, name: currentUser }));
+      try {
+        const user = JSON.parse(currentUser);
+        setUserName(user.name || "Ahmed");
+        setUserEmail(user.email || "");
+        
+        setProfile(prev => ({ 
+          ...prev, 
+          name: user.name || prev.name,
+          email: user.email || prev.email
+        }));
+        setEditData(prev => ({ 
+          ...prev, 
+          name: user.name || prev.name,
+          email: user.email || prev.email
+        }));
+      } catch (e) {
+        console.error("Error parsing currentUser:", e);
+      }
     }
-    const savedImage = localStorage.getItem("profileImage");
-    if (savedImage) {
-      setProfile(prev => ({ ...prev, profileImage: savedImage }));
-      setEditData(prev => ({ ...prev, profileImage: savedImage }));
+    
+    // تحميل الصورة المحفوظة (باسم الإيميل)
+    const currentUser2 = localStorage.getItem("currentUser");
+    if (currentUser2) {
+      try {
+        const user = JSON.parse(currentUser2);
+        if (user.email) {
+          const savedImage = localStorage.getItem(`profileImage_${user.email}`);
+          if (savedImage) {
+            setProfile(prev => ({ ...prev, profileImage: savedImage }));
+            setEditData(prev => ({ ...prev, profileImage: savedImage }));
+          }
+        }
+      } catch (e) {}
     }
   }, []);
 
-  // تشغيل الكاميرا - نسخة محسنة
-  const startCamera = async () => {
-    setCameraError(null);
-    
-    // التحقق من توفر الكاميرا
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setCameraError("Your browser does not support camera access");
+  // رفع صورة من الجهاز
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // التحقق من حجم الملف (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setToast({ message: "File size must be less than 5MB", type: "error" });
+      setTimeout(() => setToast(null), 3000);
       return;
     }
 
-    try {
-      // إيقاف أي كاميرا شغالة قبل تشغيل جديدة
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: "user",
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        } 
-      });
+    // التحقق من نوع الملف
+    if (!file.type.startsWith("image/")) {
+      setToast({ message: "Please select an image file", type: "error" });
+      setTimeout(() => setToast(null), 3000);
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageData = reader.result as string;
+      setProfile(prev => ({ ...prev, profileImage: imageData }));
+      setEditData(prev => ({ ...prev, profileImage: imageData }));
       
-      setStream(mediaStream);
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        videoRef.current.setAttribute("playsinline", "true");
-        
-        // تأكد من تشغيل الفيديو
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play().catch(e => console.log("Video play error:", e));
-        };
+      // حفظ الصورة باسم الإيميل
+      if (userEmail) {
+        localStorage.setItem(`profileImage_${userEmail}`, imageData);
       }
       
-      setShowCamera(true);
-    } catch (err: any) {
-      console.error("Camera error:", err);
-      
-      if (err.name === "NotAllowedError") {
-        setCameraError("Camera permission denied. Please allow camera access in your browser settings.");
-      } else if (err.name === "NotFoundError") {
-        setCameraError("No camera found on your device.");
-      } else {
-        setCameraError("Cannot access camera. Please check your permissions.");
-      }
-    }
-  };
-
-  // إغلاق الكاميرا
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => {
-        track.stop();
-      });
-      setStream(null);
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    setShowCamera(false);
-    setCameraError(null);
-  };
-
-  // التقاط الصورة
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      
-      // استخدم نفس أبعاد الفيديو
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      if (context) {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = canvas.toDataURL("image/jpeg", 0.9); // استخدم jpeg عشان حجم أصغر
-        
-        setProfile(prev => ({ ...prev, profileImage: imageData }));
-        setEditData(prev => ({ ...prev, profileImage: imageData }));
-        localStorage.setItem("profileImage", imageData);
-        
-        // إغلاق الكاميرا بعد التصوير
-        stopCamera();
-      }
-    }
+      setToast({ message: "Profile photo uploaded successfully!", type: "success" });
+      setTimeout(() => setToast(null), 3000);
+    };
+    reader.readAsDataURL(file);
   };
 
   // مسح الصورة
   const deletePhoto = () => {
     setProfile(prev => ({ ...prev, profileImage: "" }));
     setEditData(prev => ({ ...prev, profileImage: "" }));
-    localStorage.removeItem("profileImage");
+    if (userEmail) {
+      localStorage.removeItem(`profileImage_${userEmail}`);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setToast({ message: "Profile photo deleted", type: "info" });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  // فتح نافذة اختيار الملف
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSave = () => {
-  setProfile(editData);
-  setIsEditing(false);
-  localStorage.setItem("userProfile", JSON.stringify(editData));
-  
-  // Show success message
-  setToast({ message: "Profile saved successfully!", type: "success" });
-  
-  // Auto hide after 3 seconds
-  setTimeout(() => setToast(null), 3000);
-};
+    setProfile(editData);
+    setIsEditing(false);
+    localStorage.setItem("userProfile", JSON.stringify(editData));
+    
+    // تحديث currentUser لو تغير الاسم
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      try {
+        const user = JSON.parse(currentUser);
+        user.name = editData.name;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        setUserName(editData.name);
+      } catch (e) {}
+    }
+    
+    setToast({ message: "Profile saved successfully!", type: "success" });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleCancel = () => {
     setEditData(profile);
     setIsEditing(false);
-    stopCamera();
   };
 
   const toggleDarkMode = () => {
     setIsDarkMode(prev => !prev);
   };
-  
 
   return (
     <div className="dashboard-layout">
@@ -205,7 +193,7 @@ export default function Profile() {
                 {profile.profileImage ? (
                   <img src={profile.profileImage} alt="Profile" className="avatar-img" />
                 ) : (
-                  userName[0]
+                  userName.charAt(0).toUpperCase() || "A"
                 )}
               </div>
               <div className="user-info">
@@ -223,17 +211,24 @@ export default function Profile() {
               {profile.profileImage ? (
                 <img src={profile.profileImage} alt="Profile" className="avatar-large-img" />
               ) : (
-                <div className="avatar-large">{profile.name[0]?.toUpperCase() || "A"}</div>
+                <div className="avatar-large">{userName.charAt(0).toUpperCase() || "A"}</div>
               )}
               <div className="avatar-actions">
-                <button className="edit-avatar-btn" onClick={startCamera} title="Take photo">📷</button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
+                <button className="edit-avatar-btn" onClick={triggerFileUpload} title="Upload photo">📷</button>
                 {profile.profileImage && (
                   <button className="delete-avatar-btn" onClick={deletePhoto} title="Delete photo">🗑️</button>
                 )}
               </div>
             </div>
             <div className="profile-title">
-              <h2>{profile.name}</h2>
+              <h2>{userName}</h2>
               <p>{profile.grade} - {profile.class}</p>
               <span className="student-id">ID: {profile.studentId}</span>
             </div>
@@ -245,8 +240,8 @@ export default function Profile() {
           <div className="profile-info-grid">
             <div className="info-section">
               <h3>📋 Personal Information</h3>
-              <div className="info-row"><span className="info-label">Full Name:</span><span className="info-value">{profile.name}</span></div>
-              <div className="info-row"><span className="info-label">Email:</span><span className="info-value">{profile.email}</span></div>
+              <div className="info-row"><span className="info-label">Full Name:</span><span className="info-value">{userName}</span></div>
+              <div className="info-row"><span className="info-label">Email:</span><span className="info-value">{userEmail || profile.email}</span></div>
               <div className="info-row"><span className="info-label">Phone:</span><span className="info-value">{profile.phone}</span></div>
               <div className="info-row"><span className="info-label">Birth Date:</span><span className="info-value">{new Date(profile.birthDate).toLocaleDateString()}</span></div>
               <div className="info-row"><span className="info-label">Address:</span><span className="info-value">{profile.address}</span></div>
@@ -281,42 +276,6 @@ export default function Profile() {
           {isDarkMode ? "☀️" : "🌙"}
         </button>
 
-        {/* Camera Modal - محسنة */}
-        {showCamera && (
-          <div className="modal-overlay" onClick={stopCamera}>
-            <div className="modal camera-modal" onClick={(e) => e.stopPropagation()}>
-              <h2>📸 Take a Photo</h2>
-              
-              {cameraError ? (
-                <div className="camera-error">
-                  <span className="error-icon">⚠️</span>
-                  <p>{cameraError}</p>
-                  <button className="retry-btn" onClick={() => { setCameraError(null); startCamera(); }}>
-                    Try Again
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="camera-preview">
-                    <video 
-                      ref={videoRef} 
-                      autoPlay 
-                      playsInline 
-                      muted
-                      className="camera-video"
-                    />
-                    <canvas ref={canvasRef} style={{ display: "none" }} />
-                  </div>
-                  <div className="camera-actions">
-                    <button className="cancel-btn" onClick={stopCamera}>Cancel</button>
-                    <button className="capture-btn" onClick={capturePhoto}>📸 Capture</button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Edit Modal */}
         {isEditing && (
           <div className="modal-overlay" onClick={handleCancel}>
@@ -336,16 +295,17 @@ export default function Profile() {
             </div>
           </div>
         )}
+
         {/* Toast Notification */}
-{toast && (
-  <div className={`toast-notification ${toast.type}`}>
-    <span className="toast-icon">
-      {toast.type === "success" ? "✅" : toast.type === "error" ? "❌" : toast.type === "warning" ? "⚠️" : "ℹ️"}
-    </span>
-    <span className="toast-message">{toast.message}</span>
-    <button className="toast-close" onClick={() => setToast(null)}>✕</button>
-  </div>
-)}
+        {toast && (
+          <div className={`toast-notification ${toast.type}`}>
+            <span className="toast-icon">
+              {toast.type === "success" ? "✅" : toast.type === "error" ? "❌" : toast.type === "warning" ? "⚠️" : "ℹ️"}
+            </span>
+            <span className="toast-message">{toast.message}</span>
+            <button className="toast-close" onClick={() => setToast(null)}>✕</button>
+          </div>
+        )}
       </main>
     </div>
   );

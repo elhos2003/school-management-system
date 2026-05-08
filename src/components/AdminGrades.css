@@ -1,0 +1,233 @@
+/* src/components/AdminGrades.css */
+.admin-grades-container {
+  display: flex;
+  gap: 25px;
+  min-height: 500px;
+}
+
+/* Students List */
+.students-list {
+  width: 300px;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.students-list h3 {
+  font-size: 16px;
+  color: #1e3a5f;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eef2ff;
+}
+
+.students-scroll {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.student-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 8px;
+}
+
+.student-item:hover {
+  background: #f1f5f9;
+}
+
+.student-item.active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  background: #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1e3a5f;
+}
+
+.student-item.active .student-avatar {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.student-info {
+  flex: 1;
+}
+
+.student-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.student-email {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Grades Panel */
+.grades-panel {
+  flex: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.grades-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eef2ff;
+}
+
+.grades-header h2 {
+  font-size: 22px;
+  color: #1e3a5f;
+  margin-bottom: 5px;
+}
+
+.student-class {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.average-box {
+  text-align: center;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  padding: 10px 20px;
+  border-radius: 16px;
+  color: white;
+}
+
+.average-label {
+  font-size: 12px;
+  opacity: 0.9;
+  display: block;
+}
+
+.average-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.add-grade-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.add-grade-btn:hover {
+  transform: translateY(-2px);
+}
+
+.grade-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.grade-badge.excellent { background: #dcfce7; color: #16a34a; }
+.grade-badge.good { background: #fef3c7; color: #d97706; }
+.grade-badge.average { background: #fed7aa; color: #ea580c; }
+.grade-badge.warning { background: #fee2e2; color: #dc2626; }
+
+.no-selection {
+  text-align: center;
+  padding: 80px 20px;
+  color: #94a3b8;
+}
+
+.no-selection span {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.no-selection h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.no-grades {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+}
+
+.no-grades span {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Dark Mode */
+body.dark-mode .students-list,
+body.dark-mode .grades-panel {
+  background: #1e293b;
+}
+
+body.dark-mode .students-list h3,
+body.dark-mode .grades-header h2 {
+  color: #f1f5f9;
+}
+
+body.dark-mode .student-item:hover {
+  background: #334155;
+}
+
+body.dark-mode .student-avatar {
+  background: #334155;
+  color: #cbd5e1;
+}
+/* أضف في AdminGrades.css */
+.search-box {
+  margin-bottom: 15px;
+  padding: 0 5px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.no-students {
+  text-align: center;
+  padding: 20px;
+  color: #94a3b8;
+  font-size: 14px;
+}

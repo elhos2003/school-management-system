@@ -204,3 +204,36 @@
     font-size: 13px;
   }
 }
+/* No Grades Message */
+.no-grades {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8fafc;
+  border-radius: 20px;
+}
+
+.no-grades-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.no-grades h3 {
+  font-size: 20px;
+  color: #1e3a5f;
+  margin-bottom: 8px;
+}
+
+.no-grades p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Dark Mode */
+body.dark-mode .no-grades {
+  background: #1e293b;
+}
+
+body.dark-mode .no-grades h3 {
+  color: #f1f5f9;
+}

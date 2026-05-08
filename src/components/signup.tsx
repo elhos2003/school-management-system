@@ -1,3 +1,4 @@
+// src/components/signup.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Signup.css";
@@ -6,42 +7,88 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [terms, setTerms] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [secretCode, setSecretCode] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
+    setIsLoading(true);
 
-    if (name.length < 3 || /^[0-9]/.test(name)) {
-      setError("Invalid name");
+    if (!name || !email || !password) {
+      setError("All fields are required");
+      setIsLoading(false);
       return;
     }
 
     if (!email.includes("@")) {
-      setError("Invalid email");
+      setError("Enter valid email");
+      setIsLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError("Weak password");
+      setError("Password must be at least 8 characters");
+      setIsLoading(false);
       return;
     }
 
-    if (!terms) {
-      setError("You must accept terms");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
-    localStorage.setItem("user", JSON.stringify({ name, email, password }));
-    navigate("/login");
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    
+    const emailExists = users.some((user: any) => user.email === email);
+    if (emailExists) {
+      setError("Email already registered");
+      setIsLoading(false);
+      return;
+    }
+
+    const isAdmin = secretCode === "ADMIN2026";
+    
+    const newUser = {
+      id: Date.now().toString(),
+      name: name,
+      email: email,
+      password: password,
+      role: isAdmin ? "admin" : "student",
+      createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+    
+    localStorage.setItem("currentUser", JSON.stringify({
+      name: name,
+      email: email,
+      role: isAdmin ? "admin" : "student"
+    }));
+    
+    setSuccess(isAdmin ? "Admin account created successfully!" : "Account created successfully!");
+    
+    setTimeout(() => {
+      if (isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    }, 1500);
+    
+    setIsLoading(false);
   };
 
   return (
-    <div className="signup-page">
-      {/* Top Bar with Logo */}
+    <div className="login-page">
       <div className="top-bar">
         <div className="logo">
           <img 
@@ -54,73 +101,85 @@ export default function Signup() {
         </div>
       </div>
 
-      {/* Background Circles */}
       <div className="circle circle-1"></div>
       <div className="circle circle-2"></div>
       <div className="circle circle-3"></div>
       <div className="circle circle-4"></div>
 
-      {/* Signup Card */}
-      <form className="signup-card" onSubmit={handleSignup}>
-        <h1 className="title">Get Started Now</h1>
+      <form className="login-card" onSubmit={handleSignup}>
+        <h1 className="title">Create Account</h1>
+        <p className="subtitle">
+          Join our school system to access all features.
+        </p>
 
-        {/* Name */}
         <div className="form-group">
-          <label>Name</label>
+          <label>Full Name</label>
           <input
             type="text"
-            placeholder="Enter your name"
+            placeholder="Enter your full name"
             className="input"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
         </div>
-        <small className="error"></small>
 
-        {/* Email */}
         <div className="form-group">
-          <label>Email address</label>
+          <label>Email</label>
           <input
             type="email"
             placeholder="Enter your email"
             className="input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
-        <small className="error"></small>
 
-        {/* Password */}
         <div className="form-group">
           <label>Password</label>
           <input
             type="password"
-            placeholder="••••••••"
+            placeholder="At least 8 characters"
             className="input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
-        <small className="error"></small>
 
-        {/* Terms */}
-        <label className="terms-label">
-          <input 
-            type="checkbox" 
-            checked={terms}
-            onChange={() => setTerms(!terms)}
+        <div className="form-group">
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            placeholder="Confirm your password"
+            className="input"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
           />
-          I agree to the terms & policy
-        </label>
+        </div>
 
-        {/* Button */}
-        <button className="btn" type="submit">Sign Up</button>
+        <div className="form-group">
+          <label>Secret Code (for admin only)</label>
+          <input
+            type="password"
+            placeholder="Enter secret code if you are admin"
+            className="input"
+            value={secretCode}
+            onChange={(e) => setSecretCode(e.target.value)}
+          />
+        </div>
+
+        <button className="btn" type="submit" disabled={isLoading}>
+          {isLoading ? "Creating account..." : "Sign up"}
+        </button>
         
         {error && <p className="form-message error-text">{error}</p>}
+        {success && <p className="form-message success-text">{success}</p>}
 
-        {/* Login Link */}
-        <p className="login-text">
-          Have an account? <span onClick={() => navigate("/login")}>Sign in</span>
+        <p className="signup-text">
+          Already have an account? <span onClick={() => navigate("/login")}>Sign in</span>
         </p>
       </form>
     </div>

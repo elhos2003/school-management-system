@@ -1,0 +1,24 @@
+/* src/components/AdminBehavior.css */
+.grade-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.grade-badge.exemplary { background: #10b981; color: white; }
+.grade-badge.acceptable { background: #f59e0b; color: white; }
+.grade-badge.unacceptable { background: #ef4444; color: white; }
+
+.points {
+  font-weight: 700;
+  text-align: center;
+}
+
+.comment-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

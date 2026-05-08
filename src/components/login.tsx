@@ -1,78 +1,82 @@
-import { useState } from "react";
+// src/components/Login.tsx
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
-
-interface User {
-  name: string;
-  email: string;
-  password: string;
-}
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("savedEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    // Validation
     if (!email.includes("@")) {
       setError("Enter valid email");
+      setIsLoading(false);
       return;
     }
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
+      setIsLoading(false);
       return;
     }
 
-    const storedUser = localStorage.getItem("user");
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    
+    const foundUser = users.find(
+      (user: any) => user.email === email && user.password === password
+    );
 
-    if (!storedUser) {
-      setError("No account found ❌");
-      return;
-    }
-
-    let user: User;
-
-    try {
-      user = JSON.parse(storedUser);
-    } catch (err) {
-      setError("Data corrupted ❌");
-      return;
-    }
-
-    // ✅ مقارنة الإيميل والباسورد (الجديد بعد الريسيت)
-    if (user.email === email && user.password === password) {
-      localStorage.setItem("currentUser", user.name);
-
+    if (foundUser) {
+      localStorage.setItem("currentUser", JSON.stringify({
+        name: foundUser.name,
+        email: foundUser.email,
+        role: foundUser.role || "student"
+      }));
+      
       if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
+        localStorage.setItem("savedEmail", email);
       } else {
-        localStorage.removeItem("rememberMe");
+        localStorage.removeItem("savedEmail");
       }
-
-      navigate("/dashboard");
+      
+      if (foundUser.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
     } else {
-      setError("Wrong email or password ❌");
+      setError("Wrong email or password");
     }
+    
+    setIsLoading(false);
   };
 
   return (
     <div className="login-page">
       <div className="top-bar">
         <div className="logo">
-          <img
-            src="/Photo/WhatsApp Image 2026-03-15 at 4.13.20 PM.jpeg"
-            alt="School Logo"
+          <img 
+            src="/Photo/WhatsApp Image 2026-03-15 at 4.13.20 PM.jpeg" 
+            alt="School Logo" 
             onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                "https://via.placeholder.com/60x60?text=School";
+              (e.target as HTMLImageElement).src = "https://via.placeholder.com/60x60?text=School";
             }}
           />
         </div>
@@ -97,6 +101,7 @@ export default function Login() {
             className="input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
 
@@ -104,42 +109,43 @@ export default function Login() {
           <label>Password</label>
           <input
             type="password"
-            placeholder="••••••••"
+            placeholder="Enter your password"
             className="input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
 
         <div className="row">
           <label className="remember-label">
-            <input
-              type="checkbox"
+            <input 
+              type="checkbox" 
               checked={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
-            />
+            /> 
             Remember me
           </label>
-
-          <span
-            className="forgot-link"
-            onClick={() => navigate("/forgetpassword")}
+          <a 
+            href="#" 
+            className="forgot-link" 
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/forgetpassword");
+            }}
           >
             Forgot password?
-          </span>
+          </a>
         </div>
 
-        <button className="btn" type="submit">
-          Sign in
+        <button className="btn" type="submit" disabled={isLoading}>
+          {isLoading ? "Signing in..." : "Sign in"}
         </button>
-
+        
         {error && <p className="form-message error-text">{error}</p>}
 
         <p className="signup-text">
-          Don't have an account?{" "}
-          <span onClick={() => navigate("/signup")}>
-            Sign up for free!
-          </span>
+          Don't have an account? <span onClick={() => navigate("/signup")}>Sign up for free!</span>
         </p>
       </form>
     </div>
